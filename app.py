@@ -11,15 +11,13 @@ app.secret_key = "your_secret_key_here"
 def connectdb():
     try:
         print("=== Attempting Database Connection ===")
-        print(f"Host: {os.environ.get('DATABASE_HOST', 'NOT SET')}")
-        print(f"User: {os.environ.get('DATABASE_USERNAME', 'NOT SET')}")
-        print(f"Database: {os.environ.get('DATABASE', 'NOT SET')}")
+        print("Using hardcoded credentials for testing...")
         
         connection = mysql.connector.connect(
-            host=os.environ.get('DATABASE_HOST'),
-            user=os.environ.get('DATABASE_USERNAME'),
-            password=os.environ.get('DATABASE_PASSWORD'),
-            database=os.environ.get('DATABASE', 'vetri'),
+            host='aws.connect.psdb.cloud',
+            user='kvbmwl0rzwrqdd3y37rr',
+            password='pscale_pw_x3Q3KDJtGInuNzswus7vvQDDpzOUwA8Ebry8rL9HelJ',
+            database='vetri',
             port=3306,
             ssl_disabled=False,
             connect_timeout=10
@@ -31,7 +29,7 @@ def connectdb():
             
     except mysql.connector.Error as e:
         print(f"✗ MySQL Error: {e}")
-        print(f"Error Code: {e.errno}")
+        print(f"Error Code: {e.errno if hasattr(e, 'errno') else 'N/A'}")
         return None
     except Exception as e:
         print(f"✗ Unexpected Error: {e}")
