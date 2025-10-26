@@ -1,7 +1,6 @@
 from flask import *
 import mysql.connector  # changed from oracledb
 from pyngrok import ngrok
-from pyngrok import conf
 from datetime import datetime
 import os
 app = Flask(__name__)
