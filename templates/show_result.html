@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 40px 20px;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -150px;
+      left: -150px;
+    }
+
+    .blob-2 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(225deg, var(--accent), var(--primary));
+      top: 50%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      33% {
+        transform: translate(30px, -50px) rotate(120deg);
+      }
+      66% {
+        transform: translate(-20px, 30px) rotate(240deg);
+      }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(80px);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: slideUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .score-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+      position: relative;
+      z-index: 1;
+    }
+
+    .score-icon::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      border: 3px solid rgba(16, 185, 129, 0.3);
+      animation: ripple 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 60px rgba(16, 185, 129, 0.8);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .header h1 {
+      color: var(--text-light);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-light), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Questions Container */
+    .questions-container {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .question {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: fadeInUp 0.5s ease-out both;
+      transition: all 0.3s ease;
+    }
+
+    .question:nth-child(1) { animation-delay: 0.3s; }
+    .question:nth-child(2) { animation-delay: 0.35s; }
+    .question:nth-child(3) { animation-delay: 0.4s; }
+    .question:nth-child(4) { animation-delay: 0.45s; }
+    .question:nth-child(5) { animation-delay: 0.5s; }
+    .question:nth-child(n+6) { animation-delay: 0.55s; }
+
+    .question:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(5px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .question p {
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .option {
+      padding: 12px 18px;
+      margin: 10px 0;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .correct {
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .correct::before {
+      background: var(--success);
+    }
+
+    .correct:hover::before {
+      width: 100%;
+      opacity: 0.1;
+    }
+
+    .wrong {
+      background: rgba(239, 68, 68, 0.15);
+      border: 2px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .wrong::before {
+      background: var(--danger);
+    }
+
+    .wrong:hover::before {
+      width: 100%;
+      opacity: 0.1;
+    }
+
+    .correct-answer {
+      background: rgba(99, 102, 241, 0.15);
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+    }
+
+    .correct-answer::before {
+      background: var(--primary);
+    }
+
+    .correct-answer:hover::before {
+      width: 100%;
+      opacity: 0.1;
+    }
+
+    /* Finish Button */
+    .finish-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 18px 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+
+    .finish-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .finish-btn:hover::before {
+      left: 100%;
+    }
+
+    .finish-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+    }
+
+    .finish-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .header {
+        padding: 30px 20px;
+      }
+
+      .score-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .questions-container {
+        padding: 20px;
+      }
+
+      .question {
+        padding: 15px;
+      }
+
+      .question p {
+        font-size: 14px;
+      }
+
+      .option {
+        font-size: 13px;
+        padding: 10px 15px;
+      }
+
+      .finish-btn {
+        padding: 15px 30px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <div class="container">
+    <div class="header">
+      <div class="score-icon">🏆</div>
+      <h1>Total Score: {{ total_mark }} / {{ total_marks }}</h1>
+    </div>
+
+    <div class="questions-container">
+      {% for q in questions %}
+      <div class="question">
+        <p>{{ loop.index }}. {{ q.question }}</p>
+
+        <div class="option {% if q.correct %}correct{% else %}wrong{% endif %}">
+          {% if q.correct %}✅{% else %}❌{% endif %} Your Answer: {{ q.student_text }}
+        </div>
+
+        <div class="option correct-answer">
+          ✓ Correct Answer: {{ q.crt_text }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <button class="finish-btn" onclick="window.history.back()">Finish Review</button>
+  </div>
+
+  <script>
+    // Create floating particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 12 + 's';
+      particle.style.animationDuration = (Math.random() * 8 + 8) + 's';
+      particlesContainer.appendChild(particle);
+    }
+  </script>
+</body>
+</html>

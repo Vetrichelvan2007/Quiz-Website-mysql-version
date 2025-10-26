@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Entry Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text-light);
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.4;
+      animation: float 25s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -200px;
+      left: -200px;
+    }
+
+    .blob-2 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 8s;
+    }
+
+    .blob-3 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(225deg, var(--info), var(--success));
+      top: 40%;
+      right: 10%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(50px, -80px) rotate(120deg); }
+      66% { transform: translate(-40px, 60px) rotate(240deg); }
+    }
+
+    /* Header */
+    .header-container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      margin-bottom: 50px;
+      animation: slideDown 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .icon-container {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 25px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
+      position: relative;
+    }
+
+    .icon-container::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      border: 3px solid rgba(99, 102, 241, 0.3);
+      animation: ripple 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 70px rgba(99, 102, 241, 0.8);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, var(--text-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-dark);
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Progress Section */
+    .progress-section {
+      width: 100%;
+      max-width: 900px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .progress-text {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+
+    .progress-count {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .progress-bar-container {
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Form */
+    form {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .question-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.6s ease backwards;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    }
+
+    .question-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .question-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .question-title {
+      font-weight: 700;
+      color: var(--text-light);
+      font-size: 1.3rem;
+      letter-spacing: -0.3px;
+    }
+
+    textarea,
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 16px 18px;
+      margin-bottom: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: rgba(226, 232, 240, 0.5);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 20px;
+      padding-right: 45px;
+    }
+
+    select option {
+      background: var(--background);
+      color: var(--text-light);
+      padding: 10px;
+    }
+
+    .options-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .option-input-wrapper {
+      position: relative;
+    }
+
+    .option-label {
+      position: absolute;
+      left: 18px;
+      top: -10px;
+      background: var(--card-bg);
+      padding: 0 8px;
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .correct-answer-section {
+      background: rgba(16, 185, 129, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-top: 10px;
+    }
+
+    .correct-answer-section label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--success);
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+
+    /* Submit Button */
+    .submit-container {
+      position: sticky;
+      bottom: 20px;
+      z-index: 100;
+      animation: fadeIn 1s ease;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      padding: 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-light);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-submit:hover::before {
+      left: 100%;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.7);
+    }
+
+    .btn-submit:active {
+      transform: translateY(-1px);
+    }
+
+    /* Success Message */
+    .success-message {
+      text-align: center;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      font-size: 1.3rem;
+      font-weight: 600;
+      padding: 20px;
+      border-radius: 16px;
+      border: 2px solid var(--success);
+      display: none;
+      margin-top: 30px;
+      animation: bounceIn 0.6s ease;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 12px 24px;
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn:hover {
+      background: rgba(99, 102, 241, 0.3);
+      border-color: var(--primary);
+      transform: translateX(-5px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .options-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .question-card {
+        padding: 20px;
+      }
+
+      .back-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 15px 60px;
+      }
+
+      .icon-container {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Back Button -->
+  <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+
+  <!-- Header -->
+  <div class="header-container">
+    <div class="icon-container">📝</div>
+    <h2>Enter MCQ Questions</h2>
+    <p class="subtitle">Create engaging questions for your quiz</p>
+  </div>
+
+  <!-- Progress Section -->
+  <div class="progress-section">
+    <div class="progress-info">
+      <span class="progress-text">Quiz Progress</span>
+      <span class="progress-count"><span id="completedCount">0</span> / {{ total_questions }} Questions</span>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form method="POST" action="/add_questions/{{ total_questions }}" id="quizForm">
+    {% for i in range(1, total_questions + 1) %}
+      <div class="question-card" style="animation-delay: {{ i * 0.1 }}s">
+        <div class="question-header">
+          <div class="question-number">{{ i }}</div>
+          <h3 class="question-title">Question {{ i }}</h3>
+        </div>
+        
+        <textarea 
+          name="question_{{ i }}" 
+          placeholder="Type your question here..." 
+          required
+          oninput="updateProgress()"></textarea>
+
+        <div class="options-wrapper">
+          <div class="option-input-wrapper">
+            <span class="option-label">OPTION A</span>
+            <input 
+              type="text" 
+              name="option1_{{ i }}" 
+              placeholder="Enter option A" 
+              required
+              oninput="updateProgress()">
+          </div>
+          <div class="option-input-wrapper">
+            <span class="option-label">OPTION B</span>
+            <input 
+              type="text" 
+              name="option2_{{ i }}" 
+              placeholder="Enter option B" 
+              required
+              oninput="updateProgress()">
+          </div>
+          <div class="option-input-wrapper">
+            <span class="option-label">OPTION C</span>
+            <input 
+              type="text" 
+              name="option3_{{ i }}" 
+              placeholder="Enter option C" 
+              required
+              oninput="updateProgress()">
+          </div>
+          <div class="option-input-wrapper">
+            <span class="option-label">OPTION D</span>
+            <input 
+              type="text" 
+              name="option4_{{ i }}" 
+              placeholder="Enter option D" 
+              required
+              oninput="updateProgress()">
+          </div>
+        </div>
+
+        <div class="correct-answer-section">
+          <label for="correct_option_{{ i }}">✅ Select Correct Answer:</label>
+          <select name="correct_option_{{ i }}" required onchange="updateProgress()">
+            <option value="" disabled selected hidden>Choose the correct option</option>
+            <option value="op1">Option A</option>
+            <option value="op2">Option B</option>
+            <option value="op3">Option C</option>
+            <option value="op4">Option D</option>
+          </select>
+        </div>
+      </div>
+    {% endfor %}
+    
+    <div class="submit-container">
+      <button type="submit" class="btn-submit">🚀 Submit All Questions</button>
+    </div>
+  </form>
+
+  <div class="success-message" id="successMessage">
+    ✅ Questions submitted successfully!
+  </div>
+
+  <script>
+    const totalQuestions = {{ total_questions }};
+    const form = document.getElementById('quizForm');
+    const progressBar = document.getElementById('progressBar');
+    const completedCount = document.getElementById('completedCount');
+
+    function updateProgress() {
+      const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+      let filled = 0;
+      
+      inputs.forEach(input => {
+        if (input.value.trim() !== '') {
+          filled++;
+        }
+      });
+      
+      const questionsCompleted = Math.floor(filled / 6); // 6 fields per question
+      const progress = (filled / inputs.length) * 100;
+      
+      progressBar.style.width = progress + '%';
+      completedCount.textContent = questionsCompleted;
+    }
+
+    // Add animation on input focus
+    document.querySelectorAll('input, textarea, select').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+        this.parentElement.style.transition = 'transform 0.2s ease';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+      });
+    });
+
+    // Smooth scroll to next question on completion
+    document.querySelectorAll('.question-card').forEach((card, index) => {
+      const inputs = card.querySelectorAll('input, textarea, select');
+      const lastInput = inputs[inputs.length - 1];
+      
+      lastInput.addEventListener('change', function() {
+        const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+        if (allFilled && index < totalQuestions - 1) {
+          const nextCard = document.querySelectorAll('.question-card')[index + 1];
+          setTimeout(() => {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            nextCard.querySelector('textarea').focus();
+          }, 300);
+        }
+      });
+    });
+
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+</html>

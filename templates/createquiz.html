@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 60px 20px;
+      position: relative;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -150px;
+      left: -150px;
+    }
+
+    .blob-2 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(225deg, var(--accent), var(--primary));
+      top: 50%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      33% {
+        transform: translate(30px, -50px) rotate(120deg);
+      }
+      66% {
+        transform: translate(-20px, 30px) rotate(240deg);
+      }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(80px);
+        opacity: 0;
+      }
+    }
+
+    .login-container {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      padding: 50px 40px;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 700px;
+      animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px) scale(0.95);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Header */
+    .header-section {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .icon-circle {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 60px rgba(99, 102, 241, 0.8);
+      }
+    }
+
+    .login-container h2 {
+      color: var(--text-light);
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    /* Form Grid */
+    .form-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .input-group {
+      position: relative;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .input-group:nth-child(1) { animation-delay: 0.1s; }
+    .input-group:nth-child(2) { animation-delay: 0.15s; }
+    .input-group:nth-child(3) { animation-delay: 0.2s; }
+    .input-group:nth-child(4) { animation-delay: 0.25s; }
+    .input-group:nth-child(5) { animation-delay: 0.3s; }
+    .input-group:nth-child(6) { animation-delay: 0.35s; }
+    .input-group:nth-child(7) { animation-delay: 0.4s; }
+    .input-group:nth-child(8) { animation-delay: 0.45s; }
+    .input-group:nth-child(9) { animation-delay: 0.5s; }
+    .input-group:nth-child(10) { animation-delay: 0.55s; }
+    .input-group:nth-child(11) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 16px 18px 16px 50px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: var(--text-light);
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+      appearance: none;
+    }
+
+    .input-group input::placeholder,
+    .input-group select option {
+      color: rgba(226, 232, 240, 0.5);
+    }
+
+    .input-group select option {
+      background: var(--background);
+      color: var(--text-light);
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .input-group input:focus ~ .input-icon,
+    .input-group select:focus ~ .input-icon {
+      opacity: 1;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .input-group label {
+      position: absolute;
+      left: 45px;
+      top: -10px;
+      color: var(--text-dark);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface);
+      padding: 0 8px;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    /* Two Column Layout */
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* Time Container */
+    .time-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .time-container:nth-of-type(1) { animation-delay: 0.4s; }
+    .time-container:nth-of-type(2) { animation-delay: 0.5s; }
+
+    .time-container .input-group {
+      margin: 0;
+      animation: none;
+      opacity: 1;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      margin: 30px 0 25px;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease forwards;
+      animation-delay: 0.35s;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+    }
+
+    .section-divider span {
+      padding: 0 20px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      margin-top: 30px;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease forwards;
+      animation-delay: 0.65s;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: rgba(51, 65, 85, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .back-btn:hover {
+      background: rgba(99, 102, 241, 0.3);
+      border-color: var(--primary);
+      transform: translateX(-5px);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 40px 25px;
+      }
+
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .time-container {
+        grid-template-columns: 1.5fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container h2 {
+        font-size: 1.8rem;
+      }
+
+      .time-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Animation -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Back Button -->
+  <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+
+  <div class="login-container">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="icon-circle">📝</div>
+      <h2>Create New Quiz</h2>
+      <p class="subtitle">Fill in the details to create an engaging quiz</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <form action="/createquiz" method="POST" id="quizForm">
+      <div class="form-grid">
+        <!-- Quiz Name -->
+        <div class="input-group">
+          <input type="text" required placeholder=" " name="quiz_name" id="quiz_name">
+          <label for="quiz_name">QUIZ NAME</label>
+          <div class="input-icon">🎯</div>
+        </div>
+
+        <!-- Subject -->
+        <div class="input-group">
+          <input type="text" required placeholder=" " name="subject" id="subject">
+          <label for="subject">SUBJECT</label>
+          <div class="input-icon">📚</div>
+        </div>
+
+        <!-- Department & Class -->
+        <div class="two-column">
+          <div class="input-group">
+            <select name="dept" id="dept" required>
+              <option value="" disabled selected hidden></option>
+              {% for dept in departments %}
+                <option value="{{ dept }}">{{ dept }}</option>
+              {% endfor %}
+            </select>
+            <label for="dept">DEPARTMENT</label>
+            <div class="input-icon">🏢</div>
+          </div>
+
+          <div class="input-group">
+            <select name="class" id="class" required>
+              <option value="" disabled selected hidden></option>
+            </select>
+            <label for="class">CLASS</label>
+            <div class="input-icon">🎓</div>
+          </div>
+        </div>
+
+        <!-- Questions & Marks -->
+        <div class="two-column">
+          <div class="input-group">
+            <input type="number" required placeholder=" " name="no_of_questions" id="no_of_questions" min="1">
+            <label for="no_of_questions">NO. OF QUESTIONS</label>
+            <div class="input-icon">❓</div>
+          </div>
+
+          <div class="input-group">
+            <input type="number" required placeholder=" " name="mark_per_question" id="mark_per_question" min="1">
+            <label for="mark_per_question">MARKS PER QUESTION</label>
+            <div class="input-icon">⭐</div>
+          </div>
+        </div>
+
+        <!-- Section Divider -->
+        <div class="section-divider">
+          <span>⏰ Schedule Details</span>
+        </div>
+
+        <!-- Start Date & Time -->
+        <div class="input-group">
+          <input type="date" required placeholder=" " name="start_date" id="start_date">
+          <label for="start_date">START DATE</label>
+          <div class="input-icon">📅</div>
+        </div>
+
+        <div class="time-container">
+          <div class="input-group">
+            <input type="text" required placeholder=" " name="start_time" id="start_time" pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]$">
+            <label for="start_time">START TIME (HH:MM)</label>
+            <div class="input-icon">🕐</div>
+          </div>
+          <div class="input-group">
+            <select name="start_ampm" required>
+              <option value="" disabled selected hidden></option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+            <label>PERIOD</label>
+            <div class="input-icon">☀️</div>
+          </div>
+        </div>
+
+        <!-- End Date & Time -->
+        <div class="input-group">
+          <input type="date" required placeholder=" " name="end_date" id="end_date">
+          <label for="end_date">END DATE</label>
+          <div class="input-icon">📅</div>
+        </div>
+
+        <div class="time-container">
+          <div class="input-group">
+            <input type="text" required placeholder=" " name="end_time" id="end_time" pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]$">
+            <label for="end_time">END TIME (HH:MM)</label>
+            <div class="input-icon">🕐</div>
+          </div>
+          <div class="input-group">
+            <select name="end_ampm" required>
+              <option value="" disabled selected hidden></option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+            <label>PERIOD</label>
+            <div class="input-icon">🌙</div>
+          </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="input-group">
+          <input type="number" required placeholder=" " name="duration_minutes" id="duration_minutes" min="1">
+          <label for="duration_minutes">DURATION (MINUTES)</label>
+          <div class="input-icon">⏱️</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">🚀 Start Creating Quiz</button>
+    </form>
+  </div>
+
+  <script>
+    // Create particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 40; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 12 + 's';
+      particle.style.animationDuration = (Math.random() * 8 + 8) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    // Progress bar
+    const form = document.getElementById('quizForm');
+    const progressFill = document.getElementById('progressFill');
+    const inputs = form.querySelectorAll('input[required], select[required]');
+    
+    function updateProgress() {
+      let filled = 0;
+      inputs.forEach(input => {
+        if (input.value.trim() !== '') filled++;
+      });
+      const progress = (filled / inputs.length) * 100;
+      progressFill.style.width = progress + '%';
+    }
+
+    inputs.forEach(input => {
+      input.addEventListener('input', updateProgress);
+      input.addEventListener('change', updateProgress);
+    });
+
+    // Load classes dynamically
+    document.getElementById("dept").addEventListener("change", async function () {
+      const deptName = this.value;
+      const response = await fetch(`/get_classes/${encodeURIComponent(deptName)}`);
+      const classes = await response.json();
+
+      const classSelect = document.getElementById("class");
+      classSelect.innerHTML = '<option value="" disabled selected hidden></option>';
+      classes.forEach(cls => {
+        const option = document.createElement("option");
+        option.value = cls;
+        option.textContent = cls;
+        classSelect.appendChild(option);
+      });
+      updateProgress();
+    });
+
+    // Form validation
+    form.addEventListener("submit", function (e) {
+      const startDate = document.getElementById("start_date").value;
+      const startTime = document.getElementById("start_time").value;
+      const startAMPM = document.querySelector("select[name='start_ampm']").value;
+      const endDate = document.getElementById("end_date").value;
+      const endTime = document.getElementById("end_time").value;
+      const endAMPM = document.querySelector("select[name='end_ampm']").value;
+
+      if (!startDate || !startTime || !startAMPM || !endDate || !endTime || !endAMPM) {
+        alert("⚠️ Please fill in all date and time fields.");
+        e.preventDefault();
+        return;
+      }
+
+      function parse12HourTime(dateStr, timeStr, ampm) {
+        let [hour, minute] = timeStr.split(":").map(Number);
+        if (ampm === "PM" && hour < 12) hour += 12;
+        if (ampm === "AM" && hour === 12) hour = 0;
+        return new Date(`${dateStr}T${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}:00`);
+      }
+
+      const startDateTime = parse12HourTime(startDate, startTime, startAMPM);
+      const endDateTime = parse12HourTime(endDate, endTime, endAMPM);
+
+      if (endDateTime <= startDateTime) {
+        alert("⚠️ End date and time must be after start date and time.");
+        e.preventDefault();
+      }
+    });
+
+    // Input animations
+    document.querySelectorAll('.input-group input, .input-group select').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

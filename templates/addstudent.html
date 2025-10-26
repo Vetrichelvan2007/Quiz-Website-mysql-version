@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Student</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+  background: var(--background);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow-y: auto; /* ✅ allows scrolling */
+  padding: 20px;
+}
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -150px;
+      left: -150px;
+    }
+
+    .blob-2 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(225deg, var(--accent), var(--primary));
+      top: 50%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      33% {
+        transform: translate(30px, -50px) rotate(120deg);
+      }
+      66% {
+        transform: translate(-20px, 30px) rotate(240deg);
+      }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(80px);
+        opacity: 0;
+      }
+    }
+
+    .edit-container {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      padding: 50px 40px;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+      animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px) scale(0.95);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Header */
+    .header-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .icon-circle {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 25px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 45px;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+      position: relative;
+    }
+
+    .icon-circle::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      border: 3px solid rgba(99, 102, 241, 0.3);
+      animation: ripple 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 60px rgba(99, 102, 241, 0.8);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .edit-container h2 {
+      color: var(--text-light);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .input-group {
+      position: relative;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .input-group:nth-child(1) { animation-delay: 0.1s; }
+    .input-group:nth-child(2) { animation-delay: 0.2s; }
+    .input-group:nth-child(3) { animation-delay: 0.3s; }
+    .input-group:nth-child(4) { animation-delay: 0.4s; }
+    .input-group:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 16px 18px 16px 50px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: var(--text-light);
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+      appearance: none;
+    }
+
+    .input-group input::placeholder {
+      color: rgba(226, 232, 240, 0.5);
+    }
+
+    .input-group select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 20px;
+      padding-right: 45px;
+    }
+
+    .input-group select option {
+      background: var(--background);
+      color: var(--text-light);
+      padding: 10px;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .input-group input:focus ~ .input-icon,
+    .input-group select:focus ~ .input-icon {
+      opacity: 1;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .input-group label {
+      position: absolute;
+      left: 45px;
+      top: -10px;
+      color: var(--text-dark);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface);
+      padding: 0 8px;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      animation: fadeIn 1s ease;
+      animation-delay: 0.7s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .footer a:hover {
+      color: var(--secondary);
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    /* Success Message Animation */
+    .success-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      backdrop-filter: blur(10px);
+    }
+
+    .success-message {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: bounceIn 0.6s ease;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 20px;
+      animation: pulse 1s infinite;
+    }
+
+    .success-message h3 {
+      color: var(--text-light);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .success-message p {
+      color: var(--text-dark);
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      .edit-container {
+        padding: 40px 30px;
+      }
+
+      .icon-circle {
+        width: 70px;
+        height: 70px;
+        font-size: 35px;
+      }
+
+      .edit-container h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <div class="edit-container">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="icon-circle">👨‍🎓</div>
+      <h2>Add New Student</h2>
+      <p class="subtitle">Register a new student to the system</p>
+    </div>
+
+    <!-- Form -->
+    <form action="/addstudent" method="POST" id="addStudentForm">
+      <div class="input-group">
+        <input type="text" id="studentName" name="studentName" required placeholder=" " />
+        <label for="studentName">STUDENT NAME</label>
+        <div class="input-icon">👤</div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="studentClass" name="studentClass" required placeholder=" " />
+        <label for="studentClass">CLASS</label>
+        <div class="input-icon">🎓</div>
+      </div>
+
+      <div class="input-group">
+        <select id="studentDept" name="studentDept" required>
+          <option value="" disabled selected hidden></option>
+          <option value="AIDS">AIDS</option>
+          <option value="CSE">CSE</option>
+          <option value="IT">IT</option>
+          <option value="AIML">AIML</option>
+        </select>
+        <label for="studentDept">DEPARTMENT</label>
+        <div class="input-icon">🏢</div>
+      </div>
+
+      <div class="input-group">
+        <input type="email" id="email" name="email" required placeholder=" "/>
+        <label for="email">EMAIL ADDRESS</label>
+        <div class="input-icon">📧</div>
+      </div>
+
+      <div class="input-group">
+        <input type="password" id="password" name="password" required placeholder=" " minlength="6"/>
+        <label for="password">PASSWORD</label>
+        <div class="input-icon">🔒</div>
+      </div>
+
+      <button type="submit" class="btn">✅ Add Student</button>
+    </form>
+
+    <div class="footer">
+      <a href="/dashboard">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Success Overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-message">
+      <div class="success-icon">✓</div>
+      <h3>Success!</h3>
+      <p>Student added successfully</p>
+    </div>
+  </div>
+
+  <script>
+    // Create particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 40; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 12 + 's';
+      particle.style.animationDuration = (Math.random() * 8 + 8) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    // Add input animations
+    document.querySelectorAll('.input-group input, .input-group select').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = '';
+      });
+
+      // Real-time validation feedback
+      input.addEventListener('input', function() {
+        if (this.checkValidity()) {
+          this.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+        } else {
+          this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }
+      });
+    });
+
+    // Form validation and animation
+    const form = document.getElementById('addStudentForm');
+    form.addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('⚠️ Please enter a valid email address');
+        return;
+      }
+
+      // Password length validation
+      if (password.length < 6) {
+        e.preventDefault();
+        alert('⚠️ Password must be at least 6 characters long');
+        return;
+      }
+
+      // Show success animation (optional - remove if form redirects)
+      // e.preventDefault();
+      // document.getElementById('successOverlay').style.display = 'flex';
+      // setTimeout(() => {
+      //   window.location.href = '/dashboard';
+      // }, 2000);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        window.location.href = '/dashboard';
+      }
+    });
+  </script>
+</body>
+</html>

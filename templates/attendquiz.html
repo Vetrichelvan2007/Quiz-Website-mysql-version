@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 40px 20px;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -150px;
+      left: -150px;
+    }
+
+    .blob-2 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(225deg, var(--accent), var(--primary));
+      top: 50%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      33% {
+        transform: translate(30px, -50px) rotate(120deg);
+      }
+      66% {
+        transform: translate(-20px, 30px) rotate(240deg);
+      }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(80px);
+        opacity: 0;
+      }
+    }
+
+    .quiz-container {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 800px;
+      animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px) scale(0.95);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Timer */
+    .timer {
+      background: linear-gradient(135deg, var(--danger), #f87171);
+      color: var(--text-light);
+      font-weight: 700;
+      text-align: center;
+      padding: 15px 25px;
+      font-size: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      animation: pulse 2s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      }
+      50% {
+        box-shadow: 0 4px 30px rgba(239, 68, 68, 0.6);
+      }
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    #time {
+      font-size: 24px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeInUp 0.5s ease-out both;
+      transition: all 0.3s ease;
+    }
+
+    .question:nth-child(1) { animation-delay: 0.1s; }
+    .question:nth-child(2) { animation-delay: 0.15s; }
+    .question:nth-child(3) { animation-delay: 0.2s; }
+    .question:nth-child(4) { animation-delay: 0.25s; }
+    .question:nth-child(5) { animation-delay: 0.3s; }
+    .question:nth-child(n+6) { animation-delay: 0.35s; }
+
+    .question:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .question p {
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .option:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--primary);
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .option input[type="radio"] {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .option:has(input:checked) {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+      border-color: var(--primary);
+      color: var(--text-light);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border: none;
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 20px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.6);
+    }
+
+    .submit-btn:active {
+      transform: translateY(-1px) scale(1);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .quiz-container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .timer {
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+
+      #time {
+        font-size: 20px;
+      }
+
+      .question {
+        padding: 15px;
+      }
+
+      .question p {
+        font-size: 14px;
+      }
+
+      .option {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+
+      .submit-btn {
+        padding: 15px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <div class="quiz-container">
+    <!-- Timer Display in MM:SS format -->
+    <div class="timer">
+      ⏳ Time Left: <span id="time"></span>
+    </div>
+
+    <h1>📝 Quiz</h1>
+    
+    <form method="POST">
+      {% for q in quiz_data %}
+      <div class="question">
+        <p><b>{{ loop.index }}. {{ q.question }}</b></p>
+
+        <label class="option">
+          <input type="radio" name="q{{ q.question_id }}" value="op1" required>
+          {{ q.option1 }}
+        </label>
+
+        <label class="option">
+          <input type="radio" name="q{{ q.question_id }}" value="op2">
+          {{ q.option2 }}
+        </label>
+
+        <label class="option">
+          <input type="radio" name="q{{ q.question_id }}" value="op3">
+          {{ q.option3 }}
+        </label>
+
+        <label class="option">
+          <input type="radio" name="q{{ q.question_id }}" value="op4">
+          {{ q.option4 }}
+        </label>
+      </div>
+      {% endfor %}
+
+      <button type="submit" class="submit-btn">✓ Submit Quiz</button>
+    </form>
+  </div>
+
+  <script>
+    // Create floating particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 12 + 's';
+      particle.style.animationDuration = (Math.random() * 8 + 8) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    // Timer logic
+    let timeLeft = {{ duration }}; // passed from Flask as seconds
+    const timerEl = document.getElementById('time');
+    const form = document.querySelector('form');
+
+    // Format seconds into MM:SS
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // Initial display
+    timerEl.textContent = formatTime(timeLeft);
+
+    // Countdown logic
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = formatTime(timeLeft);
+
+      // Warning effect when time is low (last 60 seconds)
+      if (timeLeft <= 60 && timeLeft > 0) {
+        document.querySelector('.timer').style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+      }
+
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        form.submit(); // Auto-submit form when time ends
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard | Quiz Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-light: #ffffff;
+      --text-dark: #e2e8f0;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      display: flex;
+      background-color: var(--background);
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      color: var(--text-dark);
+    }
+
+    /* ANIMATED BACKGROUND */
+    .animated-bg {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      top: -10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -10%;
+      right: -10%;
+      animation-delay: 7s;
+    }
+
+    .blob-3 {
+      width: 450px;
+      height: 450px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      top: 50%;
+      left: 50%;
+      animation-delay: 14s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -50px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+
+    /* FLOATING PARTICLES */
+    .particles {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(1);
+      }
+    }
+
+    /* SIDE MENU */
+    .side-menu {
+      width: 260px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      padding: 25px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      transition: var(--transition);
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      animation: slideInLeft 0.5s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .side-menu h2 {
+      font-size: 1.6rem;
+      text-align: center;
+      margin-bottom: 35px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulse 2s infinite ease-in-out;
+      position: relative;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 18px;
+      margin: 8px 0;
+      border-radius: 12px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInStagger 0.5s ease-out backwards;
+    }
+
+    .menu-btn:nth-child(2) { animation-delay: 0.1s; }
+    .menu-btn:nth-child(3) { animation-delay: 0.2s; }
+    .menu-btn:nth-child(4) { animation-delay: 0.3s; }
+    .menu-btn:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes fadeInStagger {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .menu-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .menu-btn:hover::before {
+      left: 100%;
+    }
+
+    .menu-btn:hover {
+      background: rgba(99, 102, 241, 0.2);
+      transform: translateX(8px) translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .menu-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: var(--text-light);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 1100;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      transition: var(--transition);
+    }
+
+    .hamburger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.6);
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex-grow: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: var(--transition);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+    
+    .profile-container {
+      position: relative;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PROFILE BUTTON */
+    .profile-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      color: var(--text-light);
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+    }
+
+    .profile-btn::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      opacity: 0.5;
+      animation: ripple 2s infinite;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .profile-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6);
+    }
+
+    /* PROFILE MENU */
+    .profile-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
+      overflow: hidden;
+      min-width: 220px;
+      z-index: 2000;
+    }
+    
+    .profile-menu.show {
+      display: block;
+      animation: fadeInDown 0.3s ease;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-menu a {
+      text-decoration: none;
+      display: block;
+    }
+
+    .profile-menu button {
+      background: transparent;
+      border: none;
+      padding: 16px 20px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      color: var(--text-dark);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .profile-menu button:last-child {
+      border-bottom: none;
+    }
+
+    .profile-menu button:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text-light);
+      padding-left: 24px;
+    }
+
+    /* PAGE CONTAINER */
+    .page-container {
+      padding: 30px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* QUIZ SECTION */
+    .active-quiz-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .active-quiz-section h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .quiz-card {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      border-left: 4px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .quiz-card:nth-child(1) { animation-delay: 0.1s; }
+    .quiz-card:nth-child(2) { animation-delay: 0.2s; }
+    .quiz-card:nth-child(3) { animation-delay: 0.3s; }
+    .quiz-card:nth-child(4) { animation-delay: 0.4s; }
+    .quiz-card:nth-child(5) { animation-delay: 0.5s; }
+    .quiz-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .quiz-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 20px;
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+    }
+
+    .quiz-card:hover::before {
+      opacity: 0.3;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
+      border-left-color: var(--accent);
+    }
+
+    .quiz-card h3 {
+      color: var(--text-light);
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .quiz-card p {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .quiz-card button {
+      background: linear-gradient(135deg, var(--success), #059669);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quiz-card button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .quiz-card button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .quiz-card button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6);
+    }
+
+    .quiz-card button:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    /* No Quizzes Message */
+    .no-quizzes {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dark);
+      font-size: 1.1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .side-menu {
+        transform: translateX(-100%);
+      }
+
+      .side-menu.show {
+        transform: translateX(0);
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .page-container {
+        padding: 20px;
+      }
+
+      .active-quiz-section {
+        padding: 20px;
+      }
+
+      .active-quiz-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .quiz-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .blob {
+        filter: blur(60px);
+      }
+
+      .blob-1, .blob-2, .blob-3 {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+  <div class="side-menu" id="sideMenu">
+    <h2>📘 Quiz Portal</h2>
+    <a href="#" class="menu-btn">🏠 Dashboard</a>
+    <a href="#" class="menu-btn active">📝 Active Quizzes</a>
+    <a href="{{ url_for('activequizzes') }}" class="menu-btn">📜 Quiz History</a>
+    <a href="#" class="menu-btn">❓ Help</a>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="profile-container">
+        <div class="profile-btn" onclick="toggleProfileMenu()">👤</div>
+        <div class="profile-menu" id="profileMenu">
+          <a href="{{ url_for('studentprofile') }}">
+            <button>👤 Profile</button>
+          </a>
+          <a href="{{ url_for('editstudentprofile') }}">
+            <button>✏️ Edit Profile</button>
+          </a>
+          <a href="{{ url_for('changepassword') }}">
+            <button>🔒 Change Password</button>
+          </a>
+          <a href="{{ url_for('logout') }}">
+            <button>🚪 Logout</button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-container">
+      <div class="active-quiz-section">
+        <h2>📝 Active Quizzes</h2>
+        <div class="quiz-grid">
+          {% for quiz in quizzes %}
+          <div class="quiz-card">
+            <div>
+              <h3>{{ quiz.name }}</h3>
+              <p>📚 Subject: {{ quiz.subject }}</p>
+              <p>🗓️ {{ quiz.start_date }} - {{ quiz.end_date }}</p>
+              <p>⏰ {{ quiz.starttime }} - {{ quiz.endtime }}</p>
+              <p>❓ {{ quiz.no_of_question }} Qs · {{ quiz.mark_per_question }} Marks</p>
+              <p>⌛ Duration: {{ quiz.duration_minutes }} mins</p>
+            </div>
+            <div class="quiz-footer">
+              <button onclick="window.location.href='/quiz/{{ quiz.quiz_id }}'">Start Quiz</button>
+            </div>
+          </div>
+          {% else %}
+          <div class="no-quizzes">
+            <p>No active quizzes right now 📚</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const profileMenu = document.getElementById('profileMenu');
+    const sideMenu = document.getElementById('sideMenu');
+    const particlesContainer = document.getElementById('particles');
+
+    // Create floating particles
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 12 + 's';
+      particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    function toggleProfileMenu() {
+      profileMenu.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('.profile-container')) {
+        profileMenu.classList.remove('show');
+      }
+    });
+
+    function toggleMenu() {
+      sideMenu.classList.toggle('show');
+    }
+
+    // Close menu when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+      if (window.innerWidth <= 768) {
+        if (!event.target.closest('.side-menu') && !event.target.closest('.hamburger')) {
+          sideMenu.classList.remove('show');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

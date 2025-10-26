@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Active Quizzes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --danger: #ef4444;
+      --background: #0f172a;
+      --surface: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(51, 65, 85, 0.7);
+      --text-dark: #e2e8f0;
+      --text-light: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+      animation: float 25s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 700px;
+      height: 700px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      top: -250px;
+      right: -250px;
+    }
+
+    .blob-2 {
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(135deg, var(--secondary), var(--warning));
+      bottom: -200px;
+      left: -200px;
+      animation-delay: 8s;
+    }
+
+    .blob-3 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(225deg, var(--info), var(--success));
+      top: 50%;
+      left: 30%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(60px, -90px) rotate(120deg); }
+      66% { transform: translate(-40px, 70px) rotate(240deg); }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: rise 15s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    /* NAVBAR */
+    nav {
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(20px);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      animation: slideDown 0.6s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    nav h1 {
+      color: var(--text-light);
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--text-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav a:hover {
+      background: rgba(99, 102, 241, 0.4);
+      border-color: var(--primary);
+      transform: translateX(-5px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      flex: 1;
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      position: relative;
+      z-index: 10;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Stats Section */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .stat-info h3 {
+      color: var(--text-dark);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .stat-info p {
+      color: var(--text-light);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      min-width: 200px;
+    }
+
+    .filter-bar input::placeholder {
+      color: rgba(226, 232, 240, 0.5);
+    }
+
+    .filter-bar select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 20px;
+      padding-right: 45px;
+    }
+
+    .filter-bar select option {
+      background: var(--background);
+      color: var(--text-light);
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Quiz Grid */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Quiz Card */
+    .quiz-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 28px;
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .quiz-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    }
+
+    .quiz-card::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+      border-radius: 50%;
+    }
+
+    .quiz-card:hover::after {
+      width: 500px;
+      height: 500px;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .quiz-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-title {
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      color: var(--text-light);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-info-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-info {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-info:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+
+    .quiz-info strong {
+      color: var(--text-light);
+      font-weight: 600;
+      min-width: 90px;
+    }
+
+    .quiz-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+    }
+
+    .badge-upcoming {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+    }
+
+    .badge-ended {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+    }
+
+    .quiz-footer {
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: var(--text-light);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-dark);
+      grid-column: 1 / -1;
+    }
+
+    .empty-state-icon {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      color: var(--text-light);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      nav h1 {
+        font-size: 1.5rem;
+      }
+
+      main {
+        padding: 30px 20px;
+      }
+
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+      }
+
+      .filter-bar input,
+      .filter-bar select {
+        width: 100%;
+      }
+
+      .quiz-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    <div class="gradient-blob blob-3"></div>
+  </div>
+
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <h1>🎯 Active Quizzes</h1>
+    <a href="/dashboard">← Back to Dashboard</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <!-- Stats Section -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-info">
+          <h3>Total Quizzes</h3>
+          <p id="totalQuizzes">8</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>Active Now</h3>
+          <p id="activeQuizzes">2</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <h3>Upcoming</h3>
+          <p id="upcomingQuizzes">4</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏁</div>
+        <div class="stat-info">
+          <h3>Completed</h3>
+          <p id="completedQuizzes">2</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search / Filters -->
+    <div class="filter-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Search quiz by name...">
+      <select id="subjectFilter">
+        <option value="">All Subjects</option>
+        <option value="Math">Mathematics</option>
+        <option value="CS">Computer Science</option>
+        <option value="Science">Science</option>
+        <option value="Physics">Physics</option>
+      </select>
+      <select id="classFilter">
+        <option value="">All Classes</option>
+        <option value="10">Class 10</option>
+        <option value="11">Class 11</option>
+        <option value="12">Class 12</option>
+      </select>
+    </div>
+
+    <!-- Quiz Grid -->
+    <div class="quiz-grid" id="quizGrid">
+      <!-- Quiz Card 1 -->
+      <div class="quiz-card" data-subject="Math" data-class="10">
+        <div class="quiz-content">
+          <div class="quiz-title">📐 Algebra Basics</div>
+          <div class="quiz-info-grid">
+            <div class="quiz-info">
+              <strong>Subject:</strong> Mathematics
+            </div>
+            <div class="quiz-info">
+              <strong>Class:</strong> 10
+            </div>
+            <div class="quiz-info">
+              <strong>Department:</strong> Science
+            </div>
+            <div class="quiz-info">
+              <strong>Start:</strong> 2025-09-26
+            </div>
+            <div class="quiz-info">
+              <strong>End:</strong> 2025-09-28
+            </div>
+            <div class="quiz-info">
+              <strong>Duration:</strong> 30 minutes
+            </div>
+            <div class="quiz-info">
+              <strong>Status:</strong> <span class="quiz-badge badge-active">Active</span>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-footer">
+          <button class="btn">🚀 Start Quiz</button>
+        </div>
+      </div>
+
+      <!-- Quiz Card 2 -->
+      <div class="quiz-card" data-subject="CS" data-class="12">
+        <div class="quiz-content">
+          <div class="quiz-title">💻 Computer Fundamentals</div>
+          <div class="quiz-info-grid">
+            <div class="quiz-info">
+              <strong>Subject:</strong> Computer Science
+            </div>
+            <div class="quiz-info">
+              <strong>Class:</strong> 12
+            </div>
+            <div class="quiz-info">
+              <strong>Department:</strong> IT
+            </div>
+            <div class="quiz-info">
+              <strong>Start:</strong> 2025-09-25
+            </div>
+            <div class="quiz-info">
+              <strong>End:</strong> 2025-09-30
+            </div>
+            <div class="quiz-info">
+              <strong>Duration:</strong> 45 minutes
+            </div>
+            <div class="quiz-info">
+              <strong>Status:</strong> <span class="quiz-badge badge-active">Active</span>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-footer">
+          <button class="btn">🚀 Start Quiz</button>
+        </div>
+      </div>
+
+      <!-- Quiz Card 3 -->
+      <div class="quiz-card" data-subject="Physics" data-class="11">
+        <div class="quiz-content">
+          <div class="quiz-title">⚡ Electricity & Magnetism</div>
+          <div class="quiz-info-grid">
+            <div class="quiz-info">
+              <strong>Subject:</strong> Physics
+            </div>
+            <div class="quiz-info">
+              <strong>Class:</strong> 11
+            </div>
+            <div class="quiz-info">
+              <strong>Department:</strong> Science
+            </div>
+            <div class="quiz-info">
+              <strong>Start:</strong> 2025-10-01
+            </div>
+            <div class="quiz-info">
+              <strong>End:</strong> 2025-10-05
+            </div>
+            <div class="quiz-info">
+              <strong>Duration:</strong> 60 minutes
+            </div>
+            <div class="quiz-info">
+              <strong>Status:</strong> <span class="quiz-badge badge-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-footer">
+          <button class="btn">📅 Schedule</button>
+        </div>
+      </div>
+
+      <!-- Quiz Card 4 -->
+      <div class="quiz-card" data-subject="Science" data-class="10">
+        <div class="quiz-content">
+          <div class="quiz-title">🧪 Chemical Reactions</div>
+          <div class="quiz-info-grid">
+            <div class="quiz-info">
+              <strong>Subject:</strong> Chemistry
+            </div>
+            <div class="quiz-info">
+              <strong>Class:</strong> 10
+            </div>
+            <div class="quiz-info">
+              <strong>Department:</strong> Science
+            </div>
+            <div class="quiz-info">
+              <strong>Start:</strong> 2025-09-20
+            </div>
+            <div class="quiz-info">
+              <strong>End:</strong> 2025-09-22
+            </div>
+            <div class="quiz-info">
+              <strong>Duration:</strong> 40 minutes
+            </div>
+            <div class="quiz-info">
+              <strong>Status:</strong> <span class="quiz-badge badge-ended">Ended</span>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-footer">
+          <button class="btn">📊 View Results</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Quiz Portal | <a href="/dashboard">Dashboard</a> | <a href="/createquiz">Create New Quiz</a>
+  </footer>
+
+  <script>
+    // Create particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 15 + 's';
+      particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    // Search and Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const subjectFilter = document.getElementById('subjectFilter');
+    const classFilter = document.getElementById('classFilter');
+    const quizCards = document.querySelectorAll('.quiz-card');
+
+    function filterQuizzes() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedSubject = subjectFilter.value;
+      const selectedClass = classFilter.value;
+
+      quizCards.forEach(card => {
+        const title = card.querySelector('.quiz-title').textContent.toLowerCase();
+        const subject = card.getAttribute('data-subject');
+        const classNum = card.getAttribute('data-class');
+
+        const matchesSearch = title.includes(searchTerm);
+        const matchesSubject = !selectedSubject || subject === selectedSubject;
+        const matchesClass = !selectedClass || classNum === selectedClass;
+
+        if (matchesSearch && matchesSubject && matchesClass) {
+          card.style.display = 'flex';
+          card.style.animation = 'fadeInUp 0.6s ease';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    searchInput.addEventListener('input', filterQuizzes);
+    subjectFilter.addEventListener('change', filterQuizzes);
+    classFilter.addEventListener('change', filterQuizzes);
+
+    // Staggered animation for cards
+    quizCards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Button hover sound effect (optional visual feedback)
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px) scale(1.02)';
+      });
+      btn.addEventListener('mouseleave', function() {
+        this.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>
