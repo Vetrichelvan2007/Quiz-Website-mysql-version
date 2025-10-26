@@ -11,13 +11,13 @@ app.secret_key = "your_secret_key_here"
 def connectdb():
     try:
         return mysql.connector.connect(
-        host=os.environ.get('DATABASE_HOST'),  # Changed
-        user=os.environ.get('DATABASE_USERNAME'),  # Changed
-        password=os.environ.get('DATABASE_PASSWORD'),  # Changed
-        database=os.environ.get('DATABASE'),  # Changed
-        port=3306,
-        ssl_disabled=False
-    )
+            host=os.environ.get('DATABASE_HOST'),
+            user=os.environ.get('DATABASE_USERNAME'),
+            password=os.environ.get('DATABASE_PASSWORD'),
+            database=os.environ.get('DATABASE', 'vetri'),  # Add default value
+            port=3306,
+            ssl_disabled=False
+        )
     except Exception as e:
         print("Error connecting to MySQL DB:", e)
         return None
