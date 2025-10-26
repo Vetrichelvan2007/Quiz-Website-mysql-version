@@ -10,16 +10,31 @@ app.secret_key = "your_secret_key_here"
 
 def connectdb():
     try:
-        return mysql.connector.connect(
+        print("=== Attempting Database Connection ===")
+        print(f"Host: {os.environ.get('DATABASE_HOST', 'NOT SET')}")
+        print(f"User: {os.environ.get('DATABASE_USERNAME', 'NOT SET')}")
+        print(f"Database: {os.environ.get('DATABASE', 'NOT SET')}")
+        
+        connection = mysql.connector.connect(
             host=os.environ.get('DATABASE_HOST'),
             user=os.environ.get('DATABASE_USERNAME'),
             password=os.environ.get('DATABASE_PASSWORD'),
-            database=os.environ.get('DATABASE', 'vetri'),  # Add default value
+            database=os.environ.get('DATABASE', 'vetri'),
             port=3306,
-            ssl_disabled=False
+            ssl_disabled=False,
+            connect_timeout=10
         )
+        
+        if connection.is_connected():
+            print("✓ Database connected successfully!")
+            return connection
+            
+    except mysql.connector.Error as e:
+        print(f"✗ MySQL Error: {e}")
+        print(f"Error Code: {e.errno}")
+        return None
     except Exception as e:
-        print("Error connecting to MySQL DB:", e)
+        print(f"✗ Unexpected Error: {e}")
         return None
 
 def no_cache(response):
