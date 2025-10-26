@@ -3,7 +3,7 @@ import mysql.connector  # changed from oracledb
 from pyngrok import ngrok
 from pyngrok import conf
 from datetime import datetime
-
+import os
 app = Flask(__name__)
 app.secret_key = "your_secret_key_here" 
 
@@ -13,11 +13,13 @@ app.secret_key = "your_secret_key_here"
 def connectdb():
     try:
         return mysql.connector.connect(
-            host="Vetrichelvan.mysql.pythonanywhere-services.com",
-            user="Vetrichelvan",
-            password="Vetri@2007",  # replace with your MySQL password
-            database="Vetrichelvan$default"  # PythonAnywhere often uses this format for DB names
-        )
+        host=os.environ.get('DB_HOST'),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
+        database=os.environ.get('DB_NAME'),
+        port=int(os.environ.get('DB_PORT', 3306)),
+        ssl_disabled=False  # Important for PlanetScale!
+    )
     except Exception as e:
         print("Error connecting to MySQL DB:", e)
         return None
