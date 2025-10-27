@@ -10,26 +10,24 @@ app.secret_key = "your_secret_key_here"
 
 def connectdb():
     try:
-        print("=== Attempting Database Connection ===")
-        print("Using hardcoded credentials for testing...")
-        
+        print("=== Attempting PlanetScale Database Connection ===")
+
         connection = mysql.connector.connect(
-            host='aws.connect.psdb.cloud',
-            user='kvbmwl0rzwrqdd3y37rr',
-            password='pscale_pw_x3Q3KDJtGInuNzswus7vvQDDpzOUwA8Ebry8rL9HelJ',
-            database='vetri',
-            port=3306,
+            host=os.getenv("DATABASE_HOST", "aws.connect.psdb.cloud"),
+            user=os.getenv("DATABASE_USERNAME", "kvbmwl0rzwrqdd3y37rr"),
+            password=os.getenv("DATABASE_PASSWORD", "pscale_pw_x3Q3KDJtGInuNzswus7vvQDDpzOUwA8Ebry8rL9HelJ"),
+            database=os.getenv("DATABASE", "vetri"),
+            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # ✅ Render has this preinstalled
             ssl_disabled=False,
             connect_timeout=10
         )
-        
+
         if connection.is_connected():
             print("✓ Database connected successfully!")
             return connection
-            
+
     except mysql.connector.Error as e:
         print(f"✗ MySQL Error: {e}")
-        print(f"Error Code: {e.errno if hasattr(e, 'errno') else 'N/A'}")
         return None
     except Exception as e:
         print(f"✗ Unexpected Error: {e}")
