@@ -13,17 +13,16 @@ def connectdb():
         print("=== Attempting PlanetScale Database Connection ===")
 
         connection = mysql.connector.connect(
-            host=os.getenv("DATABASE_HOST", "aws.connect.psdb.cloud"),
-            user=os.getenv("DATABASE_USERNAME", "kvbmwl0rzwrqdd3y37rr"),
-            password=os.getenv("DATABASE_PASSWORD", "pscale_pw_x3Q3KDJtGInuNzswus7vvQDDpzOUwA8Ebry8rL9HelJ"),
-            database=os.getenv("DATABASE", "vetri"),
-            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # ✅ Render has this preinstalled
-            ssl_disabled=False,
-            connect_timeout=10
+            host=os.getenv("DATABASE_HOST"),
+            user=os.getenv("DATABASE_USERNAME"),
+            password=os.getenv("DATABASE_PASSWORD"),
+            database=os.getenv("DATABASE"),
+            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # Required for PlanetScale
+            ssl_disabled=False
         )
 
         if connection.is_connected():
-            print("✓ Database connected successfully!")
+            print("✓ PlanetScale DB connected successfully!")
             return connection
 
     except mysql.connector.Error as e:
@@ -32,6 +31,18 @@ def connectdb():
     except Exception as e:
         print(f"✗ Unexpected Error: {e}")
         return None
+        
+@app.route("/testdb")
+def testdb():
+    conn = connectdb()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT NOW();")
+        result = cursor.fetchone()
+        conn.close()
+        return f"✅ Connected successfully! Server time: {result}"
+    else:
+        return "❌ Failed to connect to PlanetScale."
 
 def no_cache(response):
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
