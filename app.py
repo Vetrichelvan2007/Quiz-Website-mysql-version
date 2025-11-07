@@ -10,18 +10,20 @@ app.secret_key = "your_secret_key_here"
 
 def connectdb():
     try:
-        print("=== Attempting FreeDB Database Connection ===")
+        print("=== Attempting Aiven MySQL Database Connection ===")
 
         connection = mysql.connector.connect(
-            host=os.getenv("DATABASE_HOST"),       
-            user=os.getenv("DATABASE_USERNAME"),   
-            password=os.getenv("DATABASE_PASSWORD"), 
-            database=os.getenv("DATABASE"),       
-            port=3306
+            host=os.getenv("DATABASE_HOST"),
+            user=os.getenv("DATABASE_USERNAME"),
+            password=os.getenv("DATABASE_PASSWORD"),
+            database=os.getenv("DATABASE"),
+            port=int(os.getenv("DATABASE_PORT", 3306)),
+            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # needed for Aiven SSL
+            ssl_disabled=False
         )
 
         if connection.is_connected():
-            print("✓ FreeDB database connected successfully!")
+            print("✓ Aiven MySQL DB connected successfully!")
             return connection
 
     except mysql.connector.Error as e:
