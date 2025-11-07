@@ -17,9 +17,8 @@ def connectdb():
             user=os.getenv("DATABASE_USERNAME"),
             password=os.getenv("DATABASE_PASSWORD"),
             database=os.getenv("DATABASE"),
-            port=19176,  # Aiven's MySQL port
-            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # works on Render
-            ssl_disabled=False
+            port=19176,
+            ssl_disabled=False  # keep true for Aiven
         )
 
         if connection.is_connected():
@@ -1364,7 +1363,7 @@ def edit_quiz(quiz_id):
                 return redirect(url_for("edit_quiz", quiz_id=quiz_id))
 
             # Validate class exists
-            cursor.execute("SELECT class_id FROM class WHERE class_name=:1", (classname,))
+            cursor.execute("SELECT class_id FROM class WHERE class_name=%s", (classname,))
             class_row = cursor.fetchone()
             if not class_row:
                 flash(f"Class '{classname}' does not exist!", "error")
@@ -1372,7 +1371,7 @@ def edit_quiz(quiz_id):
             class_id = class_row[0]
 
             # Validate department exists
-            cursor.execute("SELECT dept_id FROM department WHERE dept_name=:1", (deptname,))
+            cursor.execute("SELECT dept_id FROM department WHERE dept_name=%s", (deptname,))
             dept_row = cursor.fetchone()
             if not dept_row:
                 flash(f"Department '{deptname}' does not exist!", "error")
@@ -1389,30 +1388,31 @@ def edit_quiz(quiz_id):
             # Determine status
             status = "active" if end_dt > datetime.now() else "inactive"
 
-            # Update quiz
+            # ✅ Update quiz (MySQL version)
             cursor.execute("""
                 UPDATE quiz SET 
-                    name=:1, subject=:2, class_id=:3, dept_id=:4,
-                    duration_minutes=:5, start_date=TO_DATE(:6,'YYYY-MM-DD'), starttime=:7,
-                    end_date=TO_DATE(:8,'YYYY-MM-DD'), endtime=:9, status=:10
-                WHERE quiz_id=:11
+                    name=%s, subject=%s, class_id=%s, dept_id=%s,
+                    duration_minutes=%s, start_date=%s, starttime=%s,
+                    end_date=%s, endtime=%s, status=%s
+                WHERE quiz_id=%s
             """, (
                 quiz_name, subject, class_id, dept_id, duration,
                 start_date, f"{start_time} {start_ampm}",
                 end_date, f"{end_time} {end_ampm}", status, quiz_id
             ))
+
             connection.commit()
             flash("Quiz updated successfully!", "success")
             return redirect(url_for("activequizzes"))
 
-        # GET request: fetch quiz info
-        cursor.execute("SELECT * FROM quiz WHERE quiz_id=:1", (quiz_id,))
+        # ✅ GET request: fetch quiz info (MySQL version)
+        cursor.execute("SELECT * FROM quiz WHERE quiz_id=%s", (quiz_id,))
         quiz_row = cursor.fetchone()
 
-        cursor.execute("SELECT class_name FROM class WHERE class_id=:1", (quiz_row[3],))
+        cursor.execute("SELECT class_name FROM class WHERE class_id=%s", (quiz_row[3],))
         class_name = cursor.fetchone()[0]
 
-        cursor.execute("SELECT dept_name FROM department WHERE dept_id=:1", (quiz_row[4],))
+        cursor.execute("SELECT dept_name FROM department WHERE dept_id=%s", (quiz_row[4],))
         dept_name = cursor.fetchone()[0]
 
         quiz = {
@@ -1442,6 +1442,7 @@ def edit_quiz(quiz_id):
             connection.close()
 
     return render_template("edit_quiz.html", quiz=quiz)
+
 
 if __name__ == "__main__":
     init_db()
