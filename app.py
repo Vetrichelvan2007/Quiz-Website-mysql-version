@@ -17,11 +17,9 @@ def connectdb():
             user=os.getenv("DATABASE_USERNAME"),
             password=os.getenv("DATABASE_PASSWORD"),
             database=os.getenv("DATABASE"),
-            port=19176,  # Aiven MySQL port
-            ssl_disabled=False,
-            ssl_verify_cert=True,
-            ssl_verify_identity=True,
-            ssl_mode="REQUIRED"
+            port=19176,  # Aiven's MySQL port
+            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # works on Render
+            ssl_disabled=False
         )
 
         if connection.is_connected():
@@ -34,6 +32,7 @@ def connectdb():
     except Exception as e:
         print(f"✗ Unexpected Error: {e}")
         return None
+
 
 
 def init_db():
