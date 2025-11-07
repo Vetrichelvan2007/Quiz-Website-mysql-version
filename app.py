@@ -17,13 +17,15 @@ def connectdb():
             user=os.getenv("DATABASE_USERNAME"),
             password=os.getenv("DATABASE_PASSWORD"),
             database=os.getenv("DATABASE"),
-            port=int(os.getenv("DATABASE_PORT", 3306)),
-            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # needed for Aiven SSL
-            ssl_disabled=False
+            port=19176,  # Aiven MySQL port
+            ssl_disabled=False,
+            ssl_verify_cert=True,
+            ssl_verify_identity=True,
+            ssl_mode="REQUIRED"
         )
 
         if connection.is_connected():
-            print("✓ Aiven MySQL DB connected successfully!")
+            print("✓ Connected successfully to Aiven MySQL!")
             return connection
 
     except mysql.connector.Error as e:
