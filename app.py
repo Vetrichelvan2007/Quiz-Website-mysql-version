@@ -10,19 +10,18 @@ app.secret_key = "your_secret_key_here"
 
 def connectdb():
     try:
-        print("=== Attempting PlanetScale Database Connection ===")
+        print("=== Attempting FreeDB Database Connection ===")
 
         connection = mysql.connector.connect(
-            host=os.getenv("DATABASE_HOST"),
-            user=os.getenv("DATABASE_USERNAME"),
-            password=os.getenv("DATABASE_PASSWORD"),
-            database=os.getenv("DATABASE"),
-            ssl_ca="/etc/ssl/certs/ca-certificates.crt",  # Required for PlanetScale
-            ssl_disabled=False
+            host=os.getenv("DATABASE_HOST"),       
+            user=os.getenv("DATABASE_USERNAME"),   
+            password=os.getenv("DATABASE_PASSWORD"), 
+            database=os.getenv("DATABASE"),       
+            port=3306
         )
 
         if connection.is_connected():
-            print("✓ PlanetScale DB connected successfully!")
+            print("✓ FreeDB database connected successfully!")
             return connection
 
     except mysql.connector.Error as e:
